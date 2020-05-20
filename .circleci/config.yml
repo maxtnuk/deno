@@ -14,8 +14,6 @@ commands:
   docker:
     description: "deploy repo"
     steps:
-      - setup_remote_docker:
-          docker_layer_caching: true
       - run: echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
       - run: pwd && ls -al
       - run: docker build -t maxtnt/deno:experiment -f ./docker/Dockerfile .
