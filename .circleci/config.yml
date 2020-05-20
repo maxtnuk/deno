@@ -1,38 +1,42 @@
-version: 2
-jobs:
-  build:
+version: 2.1
+executors:
+  deno-runtime:
     docker:
-      - image: rust:slime
+      - image: rust:slim
         user: root
         environment:
           DENO_INSTALL: "/root/.deno"
-    working_directory: /app
+commands:
+  docker:
+    description: "deploy repo"
+    steps:
+      - run: echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run: docker build -t maxtnt/deno:experiment -f ./docker/Dockerfile
+      - run: docker push maxtnt/deno:experiment
 
+  welcome:
+    description: "A very simple command for deno check"
+    steps:
+      - run: deno run https://deno.land/std@v0.41.0/examples/welcome.ts
+jobs:
+  build:
+    executor: deno-runtime
     steps:
       - checkout
-      - run:
-        name: Setup docker
-        command: |
-          apt-get update
-          apt-get install -y python3
-          update-alternatives --install /usr/bin/python python /usr/bin/python3 1 \
-              && python --version
-      - run:
-        name: build deno
-        command: |
-          cd deno/cli && cargo install --path .
-          deno --version
-  test:
+      - run: apt-get update && apt-get install -y python3 git && apt-get clean
+      - run: update-alternatives --install /usr/bin/python python /usr/bin/python3 1 && python --version
+      - run: git submodule update --init
+      - run: cd cli && cargo install --path . && deno --version
+      - welcome
+  docker:
+    executor: deno-runtime
     steps:
-      - run:
-          name: test code
-          command: |
-            echo test
+      - docker
 
 workflows:
-  version: 2
-  build:
-    jobs:s
+  build-test:
+    jobs:
       - build
-      - test
-
+      - deploy
