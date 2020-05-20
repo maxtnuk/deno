@@ -6,18 +6,15 @@ executors:
         user: root
         environment:
           DENO_INSTALL: "/root/.deno"
-  docker-deployer:
-    docker:
-      - image: docker:latest
-        user: root
+    docker-deployer:
+      docker:
+        - image: docker:latest
+          user: root
 commands:
   docker:
     description: "deploy repo"
     steps:
       - run: echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
-      - run: pwd && ls -al
-      - run: docker build -t maxtnt/deno:experiment -f ./docker/Dockerfile .
-      - run: docker push maxtnt/deno:experiment
 
   welcome:
     description: "A very simple command for deno check"
@@ -36,7 +33,11 @@ jobs:
   deploy:
     executor: docker-deployer
     steps:
+      - checkout
       - docker
+      - run: pwd && ls -al
+      - run: docker build -t maxtnt/deno:experiment -f ./docker/Dockerfile .
+      - run: docker push maxtnt/deno:experiment
 
 workflows:
   build-test:
