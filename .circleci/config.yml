@@ -6,6 +6,10 @@ executors:
         user: root
         environment:
           DENO_INSTALL: "/root/.deno"
+  docker-deployer:
+    docker:
+      - image: docker:latest
+        user: root
 commands:
   docker:
     description: "deploy repo"
@@ -31,7 +35,7 @@ jobs:
       - run: cd cli && cargo install --path . && deno --version
       - welcome
   deploy:
-    executor: deno-runtime
+    executor: docker-deployer
     steps:
       - docker
 
