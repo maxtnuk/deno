@@ -3,7 +3,7 @@ FROM rust:slim
 USER root
 # install python
 RUN apt-get update
-RUN apt-get install -y python3
+RUN apt-get install -y python3 git
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 1 \
     && python --version
 
