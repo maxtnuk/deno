@@ -35,6 +35,8 @@ jobs:
     steps:
       - checkout
       - docker
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run: pwd && ls -al
       - run: docker build -t maxtnt/deno:experiment -f ./docker/Dockerfile .
       - run: docker push maxtnt/deno:experiment
