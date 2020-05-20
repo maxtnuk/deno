@@ -6,10 +6,10 @@ executors:
         user: root
         environment:
           DENO_INSTALL: "/root/.deno"
-    docker-deployer:
-      docker:
-        - image: docker:latest
-          user: root
+  docker-deployer:
+    docker:
+      - image: docker:latest
+        user: root
 commands:
   docker:
     description: "deploy repo"
