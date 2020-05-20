@@ -30,7 +30,7 @@ jobs:
       - run: git submodule update --init
       - run: cd cli && cargo install --path . && deno --version
       - welcome
-  docker:
+  deploy:
     executor: deno-runtime
     steps:
       - docker
